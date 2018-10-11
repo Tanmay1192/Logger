@@ -5,8 +5,10 @@
 #include <string.h>
 #include <pthread.h>
 
-#define TL_BUFFER_SIZE     100 // 64 Kb
-#define MAX_VA_MSG_SIZE    80  //  4 Kb
+#define TL_BUFFER_SIZE     65536 // 64 Kb
+#define MAX_VA_MSG_SIZE    4096 //  4 Kb
+//#define TL_BUFFER_SIZE     100 // 64 Kb
+//#define MAX_VA_MSG_SIZE    80 //  4 Kb
 #define NUM_BUFF_PER_THREAD 2
 
 typedef struct ThreadBufferT
@@ -57,6 +59,8 @@ static void gen_thread_data()
     thread_map[thread_index].tbuf[0] = &t_buf[0];
     thread_map[thread_index].tbuf[1] = &t_buf[1];
   }
+}
+
 int print_data(const char* format, ...)
 {
     // Thread specific static variable
@@ -83,8 +87,7 @@ int print_data(const char* format, ...)
     va_start( args, format );
 
     // partial handling
-    va_string_size = snprintf(va_msg, MAX_VA_MSG_SIZE,
-            "%s |%d |%s |%s : %d |",
+    va_string_size = snprintf(va_msg, MAX_VA_MSG_SIZE, "%s |%d |%s |%s : %d |",
             cur_time, pid, ll_operation_name[level], func_name, line);
 
     va_string_size += vsnprintf(va_msg + va_string_size, (MAX_VA_MSG_SIZE - va_string_size), format, args);
@@ -126,7 +129,7 @@ void flushThreadMap()
     size_t data_len = 0;
     int i;
 
-    for(i = 0; i < thread_index_g; ++i)
+    for(i = 0; i <= thread_index_g; ++i)
     {
         //memset data
         if(thread_map[i].tbuf[0]->data[0] != '\0')
@@ -158,7 +161,7 @@ void m_thread()
     size_t data_len = 0;
     while(1)
     {
-        for(i = 0; i < thread_index_g; ++i)
+        for(i = 0; i <= thread_index_g; ++i)
         {
             if(thread_map[i].tbuf[0]->status == 1)
             {
