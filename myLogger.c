@@ -57,6 +57,8 @@ static void gen_thread_data()
     thread_map[thread_index].tbuf[0] = &t_buf[0];
     thread_map[thread_index].tbuf[1] = &t_buf[1];
   }
+}
+
 int print_data(const char* format, ...)
 {
     // Thread specific static variable
